@@ -14,5 +14,19 @@ export const useGenreStore = defineStore('genre', () => {
     }
   }
 
-  return { genres, fetchAllGenres }
+  async function addGenre(newGenre){
+    try {
+      const response = await api.post('/genres', newGenre)
+      const addedGenre = response.data
+      // 追加したジャンルデータをthis.genresに追加する。
+      this.genres.push({
+        id: addedGenre.id,
+        name: addedGenre.name
+      })
+    } catch (error) {
+      console.log("保存ができませんでした", error);
+    }
+  }
+
+  return { genres, fetchAllGenres, addGenre }
 })
