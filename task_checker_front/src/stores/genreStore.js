@@ -28,5 +28,16 @@ export const useGenreStore = defineStore('genre', () => {
     }
   }
 
-  return { genres, fetchAllGenres, addGenre }
+  async function removeGenre(removeId) {
+    try {
+      // サーバーからジャンルを削除
+      await api.delete(`/genres/${removeId}`);
+      // ストアの状態からも削除
+      this.genres = this.genres.filter(genre => genre.id !== removeId);
+    } catch (error) {
+        console.error('ジャンルの削除に失敗しました。', error);
+    }
+  }
+
+  return { genres, fetchAllGenres, addGenre, removeGenre }
 })

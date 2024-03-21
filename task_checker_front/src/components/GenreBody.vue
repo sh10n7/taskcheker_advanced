@@ -17,7 +17,13 @@ const submitGenre = async() => {
   }
 }
 
-
+const deleteGenre = async(genreId) => {
+  try{
+    await genreStore.removeGenre(genreId);
+  }catch(error){
+    console.log('ジャンルの削除ができませんでした', error);
+  }
+}
 
 </script>
 
@@ -27,7 +33,7 @@ const submitGenre = async() => {
       <ul>
         <li class="genre_title" v-for="genre in genreStore.genres" :key="genre.id">
           <span>{{ genre.name }}</span>
-          <CancelIcon />
+          <CancelIcon @click="deleteGenre(genre.id)"/>
         </li>
       </ul>
       <input type="text" v-model="genre.name" />
