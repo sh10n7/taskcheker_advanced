@@ -1,22 +1,51 @@
 <script setup>
 import CancelIcon from 'vue-material-design-icons/CloseCircle.vue'
+import { useGenreStore } from '../stores/genreStore'
+import { ref } from 'vue'
+
+const genreStore = useGenreStore();
+const genre = ref({
+  name: ''
+});
+
+const submitGenre = async() => {
+  try {
+    await genreStore.addGenre(genre.value)
+    genre.value.name = ''
+  }catch(error){
+    console.log('ジャンルの保存ができませんでした', error);
+  }
+}
+
+const deleteGenre = async(genreId) => {
+  try{
+    await genreStore.removeGenre(genreId);
+  }catch(error){
+    console.log('ジャンルの削除ができませんでした', error);
+  }
+}
+
 </script>
 
 <template>
     <div class="modal_body">
       <h2 class="input_menu">ジャンル編集</h2>
       <ul>
-        <li class="genre_title">
-          <span>ジャンルの名前</span>
-          <CancelIcon />
+        <li class="genre_title" v-for="genre in genreStore.genres" :key="genre.id">
+          <span>{{ genre.name }}</span>
+          <CancelIcon @click="deleteGenre(genre.id)"/>
         </li>
       </ul>
-      <input type="text" />
-      <input class="input_submit" type="button" value="追加" />
+      <input type="text" v-model="genre.name" />
+      <input class="input_submit" type="button" value="追加" @click="submitGenre"/>
     </div>
 </template>
 
 <style>
+ul {
+  margin-bottom: 16px;
+}
+
 .genre_title {
   width: 200px;
   display: flex;
