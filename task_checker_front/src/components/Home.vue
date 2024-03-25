@@ -53,7 +53,7 @@ const filterTasksByStatus = (statusIndex) => {
   <div class="main">
     <Header />
     <div class="genre">
-      <Select @change="changeSelectedGenreId"/>
+      <Select @change="changeSelectedGenreId" :genres="genreStore.genres"/>
       <AddCircleIcon class="add_circle_outline_icon" @click="showModal = true"/>
       <FormModal v-model="showModal" body="genreBody"/>
     </div>
