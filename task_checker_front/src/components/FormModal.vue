@@ -30,7 +30,7 @@ const closeModal = () => {
 
 <template>
   <Modal v-model="showModal">
-    <component :is="component" @close-modal="closeModal" :task="task"/>
+    <component :is="component" @close-modal="closeModal" :task="props.task"/>
   </Modal>
 </template>
 

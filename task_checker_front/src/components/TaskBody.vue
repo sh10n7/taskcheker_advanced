@@ -3,12 +3,15 @@ import Select from './Select.vue'
 import { ref } from 'vue'
 import { useTaskStore } from '../stores/taskStore';
 
-const task = ref({
-  name: '',
-  explanation: '',
-  deadlineDate: '',
-  status: 0,
-  genreId: null
+// const task = ref({
+//   name: '',
+//   explanation: '',
+//   deadlineDate: '',
+//   status: 0,
+//   genreId: null
+// })
+const props = defineProps({
+  task: Object
 })
 
 const taskStore = useTaskStore();
@@ -31,14 +34,14 @@ const submitTask = async() => {
     <div>
       <h4 class="input_title">ジャンル</h4>
       <div class="task_genre">
-        <Select @change="genreSelect" :value="task.genreId"/>
+        <Select @change="genreSelect" :value="props.task.genreId"/>
       </div>
       <h4 class="input_title">タイトル</h4>
-      <input type="text" v-model="task.name"/>
+      <input type="text" v-model="props.task.name"/>
       <h4 class="input_title">説明</h4>
-      <textarea v-model="task.explanation"/>
+      <textarea v-model="props.task.explanation"/>
       <h4 class="input_title">期限</h4>
-      <input class="input_date" type="date" v-model="task.deadlineDate"/>
+      <input class="input_date" type="date" v-model="props.task.deadlineDate"/>
     </div>
     <input class="input_submit" type="button" value="送信" @click="submitTask"/>
   </form>
