@@ -5,6 +5,7 @@ import { ref } from 'vue'
 export const useTaskStore = defineStore('task', () => {
   const tasks = ref([]);
   const filteredTasks = ref([]);
+  const selectedTask = ref(null);
 
   async function fetchAllTasks () {
     try{
@@ -42,7 +43,6 @@ export const useTaskStore = defineStore('task', () => {
   async function updateTask(updateTask) {
     try{
       const response = await api.put(`/tasks/${updateTask.id}`, updateTask)
-      //response.data.idと同じidのデータをthis.tasksから探し、response.dataのデータを上書きする。
       const index = this.tasks.findIndex(t => t.id === updateTask.id);
       if (index !== -1) {
         this.tasks[index] = response.data;
@@ -52,6 +52,20 @@ export const useTaskStore = defineStore('task', () => {
     }
   }
 
-  return { tasks, filteredTasks, fetchAllTasks, filterTasks, addTask, updateTask }
+  // タスクの削除
+  async function removeTask(deleteTask) {
+    try{
+      const response = await api.delete(`/tasks/${deleteTask.id}`, deleteTask); 
+      const index = this.tasks.findIndex(t => t.id === response.data.id);
+      if (index !== -1) {
+        this.tasks.splice(index, 1);
+      }
+      //this.tasksの配列から特定のデータを削除する
+    } catch(error) {
+      console.log('タスクの削除に失敗しました。', error)
+    }
+  }
+
+  return { tasks, filteredTasks, fetchAllTasks, filterTasks, addTask, updateTask, removeTask }
 })
  

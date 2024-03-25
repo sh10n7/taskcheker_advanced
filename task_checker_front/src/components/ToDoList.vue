@@ -37,7 +37,7 @@ const closeModal = () => {
         class="add_circle_outline_icon"
         @click="showModal = true"
       />
-      <FormModal v-model="showModal" body="taskBody" @close-modal="closeModal"/>
+      <FormModal v-model="showModal" body="taskBody" :task="{}" @close-modal="closeModal" />
     </div>
     <div v-if="showTask">
       <div class="task_field" v-for="task in props.tasks" :key="task.id">

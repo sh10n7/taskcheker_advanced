@@ -15,7 +15,6 @@ const taskStore = useTaskStore();
 const emit = defineEmits(['close-modal'])
 
 const genreSelect = (e) => {
-  console.log(props.task)
   props.task.genreId = Number(e.target.value)
 }
 
