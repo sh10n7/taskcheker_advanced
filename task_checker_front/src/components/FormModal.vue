@@ -6,7 +6,11 @@ import DetailBody from './DetailBody.vue'
 
 const props = defineProps({
   body: String,
-  task: Object
+  task: {
+    type: Object,
+    required: false,
+    default: () => ({})
+  }
 })
 
 const component = computed(() =>  {

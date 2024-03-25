@@ -11,6 +11,10 @@ const formattedDeadlineDate = computed(() => {
   return date.toLocaleDateString('ja-JP')
 })
 
+const closeModal = () => {
+  showModal.value = false;
+}
+
 const showModal = ref(false)
 </script>
 

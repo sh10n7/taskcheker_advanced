@@ -1,28 +1,26 @@
 <script setup>
 import Select from './Select.vue'
 import { ref } from 'vue'
-import { useTaskStore } from '../stores/taskStore';
+import { useTaskStore } from '../stores/taskStore'
 
-// const task = ref({
-//   name: '',
-//   explanation: '',
-//   deadlineDate: '',
-//   status: 0,
-//   genreId: null
-// })
 const props = defineProps({
-  task: Object
+  task: {
+    type: Object,
+    required: false,
+    default: () => ({})
+  }
 })
 
 const taskStore = useTaskStore();
 const emit = defineEmits(['close-modal'])
 
 const genreSelect = (e) => {
-  task.value.genreId = Number(e.target.value)
+  console.log(props.task)
+  props.task.genreId = Number(e.target.value)
 }
 
 const submitTask = async() => {
-  taskStore.addTask(task.value);
+  taskStore.addTask(props.task);
   emit('close-modal')
 }
 
