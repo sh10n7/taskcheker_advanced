@@ -66,6 +66,22 @@ export const useTaskStore = defineStore('task', () => {
     }
   }
 
-  return { tasks, filteredTasks, fetchAllTasks, filterTasks, addTask, updateTask, removeTask }
+  // ステータスの更新
+  async function updateTaskStatus(taskId, newStatus){
+    try{
+      // taskのステータス更新のリクエストを送る
+      await api.put(`/tasks/${taskId}/status`, {newStatus: newStatus})
+
+      //更新したステータスを該当タスクのステータスに紐付けする
+      const index = this.tasks.findIndex(t => t.id === taskId);
+      if (index !== -1) {
+        this.tasks[index].status = newStatus
+      }
+    }catch(error){
+      console.log("ステータスの更新に失敗しました", error)
+    }
+  }
+
+  return { tasks, filteredTasks, fetchAllTasks, filterTasks, addTask, updateTask, removeTask, updateTaskStatus }
 })
  
