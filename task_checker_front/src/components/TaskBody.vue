@@ -1,44 +1,58 @@
 <script setup>
 import Select from './Select.vue'
 import { ref } from 'vue'
-import { useTaskStore } from '../stores/taskStore';
+import { useTaskStore } from '../stores/taskStore'
 
-const task = ref({
-  name: '',
-  explanation: '',
-  deadlineDate: '',
-  status: 0,
-  genreId: null
+const props = defineProps({
+  task: {
+    type: Object,
+    required: false,
+    default: () => ({})
+  }
 })
 
 const taskStore = useTaskStore();
 const emit = defineEmits(['close-modal'])
 
 const genreSelect = (e) => {
-  task.value.genreId = Number(e.target.value)
+  console.log(props.task)
+  props.task.genreId = Number(e.target.value)
 }
 
 const submitTask = async() => {
-  taskStore.addTask(task.value);
-  emit('close-modal')
+  if(props.task.id) {
+    try{
+      taskStore.updateTask(props.task);
+      emit('close-modal');
+    }catch(error){
+      console.log('タスクの更新ができませんでした',error);
+    }
+  }else{
+    try{
+      taskStore.addTask(props.task);
+      emit('close-modal')
+    }catch(error){
+      console.log('タスクの追加ができませんでした',error);
+    }
+  }
 }
 
 </script>
 
 <template>
   <form class="modal_body">
-    <h2 class="input_menu">タスクを追加</h2>
+    <h2 class="input_menu">{{ task.id ? 'タスクの編集' : 'タスクの追加'}}</h2>
     <div>
       <h4 class="input_title">ジャンル</h4>
       <div class="task_genre">
-        <Select @change="genreSelect" :value="task.genreId"/>
+        <Select @change="genreSelect" :value="props.task.genreId"/>
       </div>
       <h4 class="input_title">タイトル</h4>
-      <input type="text" v-model="task.name"/>
+      <input type="text" v-model="props.task.name"/>
       <h4 class="input_title">説明</h4>
-      <textarea v-model="task.explanation"/>
+      <textarea v-model="props.task.explanation"/>
       <h4 class="input_title">期限</h4>
-      <input class="input_date" type="date" v-model="task.deadlineDate"/>
+      <input class="input_date" type="date" v-model="props.task.deadlineDate"/>
     </div>
     <input class="input_submit" type="button" value="送信" @click="submitTask"/>
   </form>

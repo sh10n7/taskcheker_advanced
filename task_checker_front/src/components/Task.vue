@@ -1,10 +1,12 @@
 <script setup>
 import Select from './Select.vue'
-import { computed } from 'vue'
+import FormModal from './FormModal.vue'
+import { ref, computed } from 'vue'
 
 const props = defineProps({
   task: Object
 })
+const showModal = ref(false)
 
 const formattedDeadlineDate = computed(() => {
   const date = new Date(props.task.deadlineDate)
@@ -25,13 +27,14 @@ const taskStyle = computed(() => {
 <template>
    <div class="task" :style="taskStyle">
     <span class="task_date">{{ formattedDeadlineDate }}</span>
-    <div class="task_text_contents">
+    <div class="task_text_contents" @click="showModal = true">
       <h3 class="task_title">{{ task.name }}</h3>
       <p class="task_sentence">{{ task.explanation}}</p>
     </div>
     <div class="task_input_contents">
       <Select />
     </div>
+    <FormModal v-model="showModal" body="DetailBody" :task="task" @close-modal="closeModal"/>
   </div>
 </template>
 

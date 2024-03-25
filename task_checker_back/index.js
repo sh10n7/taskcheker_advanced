@@ -43,12 +43,29 @@ app.post("/tasks", async (req, res) => {
     const savedData = await prisma.task.create({
       data: {
         ...req.body,
+        status: 0,
         deadlineDate: deadlineDate
       },
     });
     res.json(savedData)
   } catch(error) {
     res.status(500).send("タスクの保存に失敗しました")
+  }
+})
+
+// タスクの更新
+app.put("/tasks/:id", async(req, res) => {
+  try{
+    const deadlineDate = new Date(req.body.deadlineDate)
+    const taskId = parseInt(req.params.id, 10);
+    const updateData = await prisma.task.update({where:{id: taskId}, data: {
+      ...req.body,
+      deadlineDate: deadlineDate
+    },
+    })
+    res.json(updateData)
+  } catch(error) {
+    res.status(500).send("タスクの更新に失敗しました。")
   }
 })
 

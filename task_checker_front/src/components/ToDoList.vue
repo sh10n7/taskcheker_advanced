@@ -17,12 +17,13 @@ const props = defineProps({
 })
 
 const toggleShowTasks = () => {
-  showTask.value = !showTask.value
+  showTask.value = !showTask.value;
 }
 
 const closeModal = () => {
-  showModal.value = false
+  showModal.value = false;
 }
+
 
 </script>
 
@@ -38,8 +39,10 @@ const closeModal = () => {
       />
       <FormModal v-model="showModal" body="taskBody" @close-modal="closeModal"/>
     </div>
-    <div class="task_field" v-for="task in props.tasks" :key="task.id" v-if="showTask">
-      <Task :task="task"/>
+    <div v-if="showTask">
+      <div class="task_field" v-for="task in props.tasks" :key="task.id">
+        <Task :task="task"/>
+      </div>
     </div>
   </div>
 </template>
