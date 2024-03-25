@@ -1,21 +1,34 @@
 <script setup>
 import { ref, computed } from 'vue'
+import { useTaskStore } from '../stores/taskStore'
 import FormModal from './FormModal.vue'
 
 const props = defineProps({
   task: Object
 })
 
+const showModal = ref(false)
+const taskStore = useTaskStore();
+
 const formattedDeadlineDate = computed(() => {
   const date = new Date(props.task.deadlineDate)
   return date.toLocaleDateString('ja-JP')
 })
 
+
 const closeModal = () => {
   showModal.value = false;
 }
 
-const showModal = ref(false)
+const deleteTask = async() => {
+  try{
+    await taskStore.removeTask(props.task);
+    
+  }catch(error){
+    console.log('タスクの削除ができませんでした', error);
+  }
+}
+
 </script>
 
 <template>
@@ -24,7 +37,7 @@ const showModal = ref(false)
       <h2>{{ props.task.name }}</h2>
       <div class="buttons">
         <span class="btn edit" @click="showModal = true">編集</span>
-        <span class="btn">削除</span>
+        <span class="btn" @click="deleteTask">削除</span>
       </div>
     </div>
     <div class="detail_contents">

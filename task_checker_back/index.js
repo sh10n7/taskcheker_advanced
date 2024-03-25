@@ -69,6 +69,17 @@ app.put("/tasks/:id", async(req, res) => {
   }
 })
 
+// タスクの削除
+app.delete("/tasks/:id", async(req, res) => {
+  try {
+    const taskId = parseInt(req.params.id, 10);
+    const deletedTask = await prisma.task.delete({where: {id: taskId}})
+    res.json(deletedTask)
+  } catch(error) {
+    res.status(500).send("タスクの削除に失敗しました")
+  }
+})
+
 // ジャンルの作成
 app.post("/genres", async (req, res) => {
   console.log(req.body)
