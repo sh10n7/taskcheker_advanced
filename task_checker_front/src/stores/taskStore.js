@@ -39,6 +39,19 @@ export const useTaskStore = defineStore('task', () => {
     }
   }
 
-  return { tasks, filteredTasks, fetchAllTasks, filterTasks, addTask }
+  async function updateTask(updateTask) {
+    try{
+      const response = await api.put(`/tasks/${updateTask.id}`, updateTask)
+      //response.data.idと同じidのデータをthis.tasksから探し、response.dataのデータを上書きする。
+      const index = this.tasks.findIndex(t => t.id === updateTask.id);
+      if (index !== -1) {
+        this.tasks[index] = response.data;
+      }
+    }catch(error){
+      console.log('タスクの更新に失敗しました', error);
+    }
+  }
+
+  return { tasks, filteredTasks, fetchAllTasks, filterTasks, addTask, updateTask }
 })
  

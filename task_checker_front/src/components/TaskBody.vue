@@ -20,15 +20,28 @@ const genreSelect = (e) => {
 }
 
 const submitTask = async() => {
-  taskStore.addTask(props.task);
-  emit('close-modal')
+  if(props.task.id) {
+    try{
+      taskStore.updateTask(props.task);
+      emit('close-modal');
+    }catch(error){
+      console.log('タスクの更新ができませんでした',error);
+    }
+  }else{
+    try{
+      taskStore.addTask(props.task);
+      emit('close-modal')
+    }catch(error){
+      console.log('タスクの追加ができませんでした',error);
+    }
+  }
 }
 
 </script>
 
 <template>
   <form class="modal_body">
-    <h2 class="input_menu">タスクを追加</h2>
+    <h2 class="input_menu">{{ task.id ? 'タスクの編集' : 'タスクの追加'}}</h2>
     <div>
       <h4 class="input_title">ジャンル</h4>
       <div class="task_genre">
