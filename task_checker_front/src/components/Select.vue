@@ -3,11 +3,21 @@ import { useGenreStore } from '../stores/genreStore';
 
 const genreStore = useGenreStore();
 
+const props = defineProps({
+  taskStatus: Array,
+  genres: Array
+})
+
 </script>
 
 <template>
-  <select class="select">
-    <option v-for="genre in genreStore.genres" :key="genre.id" :value=genre.id>{{ genre.name }}</option>
+
+  <select v-if="props.taskStatus" class="select">
+    <option v-for="(status, index) in props.taskStatus" :key="index" :value=index>{{ status }}</option>
+  </select>
+
+  <select v-else-if="genres" class="select">
+    <option v-for="genre in props.genres" :key="genre.id" :value=genre.id>{{ genre.name }}</option>
   </select>
 </template>
 

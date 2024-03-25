@@ -2,11 +2,13 @@
 import Select from './Select.vue'
 import FormModal from './FormModal.vue'
 import { ref, computed } from 'vue'
+import { useTaskStore } from'../stores/taskStore'
 
 const props = defineProps({
   task: Object
 })
 const showModal = ref(false)
+const taskStore = useTaskStore();
 
 const formattedDeadlineDate = computed(() => {
   const date = new Date(props.task.deadlineDate)
@@ -21,6 +23,24 @@ const taskStyle = computed(() => {
     backgroundColor: isDeadlineAfterToday ? 'white' : 'rgb(250, 194, 194)',
   };
 })
+const taskStatusElements = [
+    "ToDo",
+    "Pending",
+    "Doing(ToDay)",
+    "WIP",
+    "Check",
+    "Done",
+  ]
+
+const changeSelectStatus = async(e) => {
+  try{
+    const taskId = props.task.id
+    const statusId = Number(e.target.value);
+    taskStore.updateTaskStatus(taskId, statusId)
+  }catch(error){
+    console.log('ステータスの更新ができませんでした', error);
+  }
+}
 
 </script>
 
@@ -32,7 +52,7 @@ const taskStyle = computed(() => {
       <p class="task_sentence">{{ task.explanation}}</p>
     </div>
     <div class="task_input_contents">
-      <Select />
+      <Select v-model="task.statusId" :taskStatus="taskStatusElements" :value="task.status" @change="changeSelectStatus"/>
     </div>
     <FormModal v-model="showModal" body="DetailBody" :task="task" @close-modal="closeModal"/>
   </div>

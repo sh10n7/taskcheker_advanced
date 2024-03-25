@@ -2,6 +2,7 @@
 import Select from './Select.vue'
 import { ref } from 'vue'
 import { useTaskStore } from '../stores/taskStore'
+import { useGenreStore } from '../stores/genreStore'
 
 const props = defineProps({
   task: {
@@ -12,6 +13,7 @@ const props = defineProps({
 })
 
 const taskStore = useTaskStore();
+const genreStore = useGenreStore();
 const emit = defineEmits(['close-modal'])
 
 const genreSelect = (e) => {
@@ -44,7 +46,7 @@ const submitTask = async() => {
     <div>
       <h4 class="input_title">ジャンル</h4>
       <div class="task_genre">
-        <Select @change="genreSelect" :value="props.task.genreId"/>
+        <Select @change="genreSelect" :value="props.task.genreId" :genres="genreStore.genres"/>
       </div>
       <h4 class="input_title">タイトル</h4>
       <input type="text" v-model="props.task.name"/>
