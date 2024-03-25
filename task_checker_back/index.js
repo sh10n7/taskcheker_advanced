@@ -102,6 +102,22 @@ app.delete("/genres/:id", async (req, res) => {
   }
 })
 
+// ステータスの更新
+app.put("/tasks/:id/status", async(req, res) => {
+  try {
+    const taskId = parseInt(req.params.id, 10);
+    const newStatus = parseInt(req.body.newStatus, 10);
+    const response = await prisma.task.update({
+      where: { id: taskId },
+      data: { status: newStatus }
+    });
+    res.json(response)
+  } catch(error) {
+    console.log(error)
+    res.status(500).send("ステータス変更に失敗しました。")
+  }
+})
+
 // サーバー起動処理
 app.listen(3000, () => {
   console.log("listening on localhost 3000")
