@@ -9,7 +9,9 @@ const currentUser = ref(null);
 
 const handleSignOut = async() => {
   try{
-    await signOut(auth)
+    await signOut(auth);
+    //サインアウトしたら、JWTを破棄する
+    localStorage.removeItem('jwt')
     router.push("/")
   }catch(error){
     console.log('ログアウトに失敗しました')
