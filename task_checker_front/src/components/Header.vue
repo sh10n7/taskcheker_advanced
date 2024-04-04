@@ -35,7 +35,7 @@ onMounted(() => {
   <div class="header">
     <div>
       <CheckAll class="header_icon" fontsize="large" />
-      <span class="header-title">Task Checker</span>
+      <span class="header-title"><router-link to="/home">Task Checker</router-link></span>
     </div>
     <div class="header-rignt" v-if="currentUser">
       <button @click="handleSignOut">ログアウト</button>
@@ -60,11 +60,15 @@ onMounted(() => {
   color: rgb(170, 1, 1);
 }
 
-.header_title {
-  font-size: 25px;
-  color: rgb(70, 70, 70);
+.header-title {
+  /* font-size: 25px; */
   font-weight: bold;
   margin-left: 10px;
+}
+
+.header-title a {
+  text-decoration: none;
+  color: rgb(70, 70, 70);
 }
 
 button {
