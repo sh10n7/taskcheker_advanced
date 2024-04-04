@@ -37,7 +37,10 @@ onMounted(() => {
       <CheckAll class="header_icon" fontsize="large" />
       <span class="header-title">Task Checker</span>
     </div>
-    <button v-if="currentUser" @click="handleSignOut">ログアウト</button>
+    <div class="header-rignt">
+      <button v-if="currentUser" @click="handleSignOut">ログアウト</button>
+      <button class="mypage-btn"><router-link to="/mypage">マイページ</router-link></button>
+    </div>
   </div>
 </template>
 
@@ -72,5 +75,14 @@ button {
   padding: 8px 20px;
   margin-bottom: 8px;
   font-size: 15px;
+}
+
+.mypage-btn {
+  margin-left: 8px;
+}
+
+.mypage-btn a {
+  text-decoration: none;
+  color: white;
 }
 </style>
