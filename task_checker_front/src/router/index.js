@@ -3,6 +3,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import SignIn from '../components/SignIn.vue'
 import SignUp from '../components/SignUp.vue';
 import Home from '../components/Home.vue';
+import MyPage from '../components/MyPage.vue';
 import { auth } from '../firebase'
 
 const routes = [
@@ -21,6 +22,11 @@ const routes = [
     name: 'Home',
     component: Home,
   },
+  {
+    path: '/mypage',
+    name: 'MyPage',
+    component: MyPage,
+  }
 ]
 
 const router = createRouter({
