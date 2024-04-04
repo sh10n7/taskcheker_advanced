@@ -8,10 +8,16 @@ const email = ref('');
 const password = ref('');
 
 const router = useRouter();
+const currentUser = ref(null);
 
 const handleSignIn = async() => {
   try{
-    await signInWithEmailAndPassword(auth, email.value, password.value)
+    const credentialUser = await signInWithEmailAndPassword(auth, email.value, password.value)
+    currentUser.value = credentialUser.user;
+    // Json Web Tokenの取得
+    const token = await credentialUser.user.getIdToken();
+    // 取得したtokenをlocalStorageに保存する。
+    localStorage.setItem('jwt', token);
     router.push("/home")
   }catch(error){
     console.log('ログインに失敗しました')
