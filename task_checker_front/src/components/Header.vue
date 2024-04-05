@@ -9,7 +9,9 @@ const currentUser = ref(null);
 
 const handleSignOut = async() => {
   try{
-    await signOut(auth)
+    await signOut(auth);
+    //サインアウトしたら、JWTを破棄する
+    localStorage.removeItem('jwt')
     router.push("/")
   }catch(error){
     console.log('ログアウトに失敗しました')
@@ -18,6 +20,7 @@ const handleSignOut = async() => {
 
 onMounted(() => {
   onAuthStateChanged(auth, (user) => {
+    console.log(auth.currentUser)
     // ユーザーがログイン中の場合はuserがtrueを返す
     if(user) {
       currentUser.value = auth.currentUser;
@@ -33,9 +36,12 @@ onMounted(() => {
   <div class="header">
     <div>
       <CheckAll class="header_icon" fontsize="large" />
-      <span class="header-title">Task Checker</span>
+      <span class="header-title"><router-link to="/home">Task Checker</router-link></span>
     </div>
-    <button v-if="currentUser" @click="handleSignOut">ログアウト</button>
+    <div class="header-rignt" v-if="currentUser">
+      <button @click="handleSignOut">ログアウト</button>
+      <button class="mypage-btn"><router-link to="/mypage">マイページ</router-link></button>
+    </div>
   </div>
 </template>
 
@@ -55,11 +61,15 @@ onMounted(() => {
   color: rgb(170, 1, 1);
 }
 
-.header_title {
-  font-size: 25px;
-  color: rgb(70, 70, 70);
+.header-title {
+  /* font-size: 25px; */
   font-weight: bold;
   margin-left: 10px;
+}
+
+.header-title a {
+  text-decoration: none;
+  color: rgb(70, 70, 70);
 }
 
 button {
@@ -70,5 +80,14 @@ button {
   padding: 8px 20px;
   margin-bottom: 8px;
   font-size: 15px;
+}
+
+.mypage-btn {
+  margin-left: 8px;
+}
+
+.mypage-btn a {
+  text-decoration: none;
+  color: white;
 }
 </style>
