@@ -19,6 +19,7 @@ model Task {
   status       Int
   genreId      Int      // This will be the foreign key.
   genre        Genre    @relation(fields: [genreId], references: [id]) // Defines the relation.
+  uid          String
 }
 
 model Genre {

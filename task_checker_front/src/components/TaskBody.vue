@@ -3,6 +3,7 @@ import Select from './Select.vue'
 import { ref } from 'vue'
 import { useTaskStore } from '../stores/taskStore'
 import { useGenreStore } from '../stores/genreStore'
+import { auth } from '../firebase';
 
 const props = defineProps({
   task: {
@@ -21,6 +22,10 @@ const genreSelect = (e) => {
 }
 
 const submitTask = async() => {
+  // ログイン中のユーザーuidをtaskオブジェクトに追加
+  const user = auth.currentUser;
+  props.task.uid = user.uid;
+
   if(props.task.id) {
     try{
       taskStore.updateTask(props.task);

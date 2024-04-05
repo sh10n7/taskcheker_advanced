@@ -5,6 +5,7 @@ import SignUp from '../components/SignUp.vue';
 import Home from '../components/Home.vue';
 import MyPage from '../components/MyPage.vue';
 import { auth } from '../firebase'
+import { onAuthStateChanged } from 'firebase/auth';
 
 const routes = [
   {
@@ -34,20 +35,35 @@ const router = createRouter({
   routes
 });
 
-router.beforeEach((to, from, next) => {
-  // ログインしていないユーザーを対象にする
-  if (!auth.currentUser) {
-    // ホームページ(/)やサインアップページアクセスしようとしている場合は、そのまま進む
-    if (to.path === '/' || to.path === '/signup') {
-      next();
-    } else {
-      // 上記以外のページにアクセスしようとした場合は、ログインページにリダイレクトする
-      next('/');
-    }
+function getCurrentUser(auth) {
+  return new Promise((resolve, reject) => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      unsubscribe();
+      resolve(user);
+    }, reject);
+  });
+}
+
+router.beforeEach(async (to, from, next) => {
+  const currentUser = await getCurrentUser(auth);
+
+  
+  // ユーザーがログインしていない場合、
+  // ログインページ('/')とサインアップページ('/signup')以外にはアクセスさせない
+  if (!currentUser && to.path !== '/' && to.path !== '/signup') {
+    next('/');
+  }
+  // ユーザーがログインしている場合、
+  // ログインページ('/')とサインアップページ('/signup')にはアクセスさせない
+  else if (currentUser && (to.path === '/' || to.path === '/signup')) {
+    // ここで '/home' はリダイレクト先のパスに置き換えてください
+    // ログインしているユーザーをホームページなど、適切なパスにリダイレクト
+    next('/home');
   } else {
-    // ユーザーがログインしている場合は、どのページにもアクセスできる
+    // それ以外の場合は、通常通りのページ遷移を許可
     next();
   }
 });
+
 
 export default router;

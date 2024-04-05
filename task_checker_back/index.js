@@ -43,7 +43,6 @@ app.get("/genres", async(req, res) => {
 
 // タスクの作成
 app.post("/tasks", async (req, res) => {
-  console.log(req.body)
   try {
     const deadlineDate = new Date(req.body.deadlineDate)
     const savedData = await prisma.task.create({
@@ -88,7 +87,7 @@ app.delete("/tasks/:id", async(req, res) => {
 
 // ジャンルの作成
 app.post("/genres", async (req, res) => {
-  console.log(req.body)
+  console.log(req.user)
   try {
     const savedData = await prisma.genre.create({data: req.body});
     res.json(savedData)
@@ -123,6 +122,34 @@ app.put("/tasks/:id/status", async(req, res) => {
     res.status(500).send("ステータス変更に失敗しました。")
   }
 })
+
+// JWTトークン検証の処理
+const verifyToken = async (req, res, next) => {
+  // AuthorizationヘッダーからBearerトークンを抽出
+  const token = req.headers.authorization.split("Bearer ")[1];
+  try {
+    // Firebase Admin SDKのverifyIdTokenメソッドを使用して、tokenの検証を実施。
+    // tokenが正しい場合はdecodedTokenにユーザー情報が含まれ、next()次の処理に進む。
+    const decodedToken = await admin.auth().verifyIdToken(token);
+    req.user = decodedToken;
+    next();
+  } catch(error) {
+    res.status(403).send('idが確認できませんでした');
+  }
+}
+
+// マイページ表示用のタスク
+app.get('/mytasks', verifyToken, async (req, res) => {
+  const uid = req.user.uid;
+  try {
+    const AllTasks = await prisma.task.findMany();
+    const MyTasks = AllTasks.filter(task => uid === task.uid);
+    res.json(MyTasks);
+  } catch(error) {
+    res.status(500).send('データの取得ができませんでした');
+  }
+})
+
 
 // サーバー起動処理
 app.listen(3000, () => {
