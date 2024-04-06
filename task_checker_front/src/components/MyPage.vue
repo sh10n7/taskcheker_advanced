@@ -45,8 +45,8 @@ const showStatus = (status) => {
 <template>
     <Header />
     <h2 class="mypage-title">投稿タスク一覧</h2>
-    <div class="tasks" v-for="task in myTasks" :key="task.id">
-      <div class="task">
+    <div class="tasks">
+      <div class="task" v-for="task in myTasks" :key="task.id">
         <span class="task_date">{{ formattedDeadlineDate(task) }}</span>
         <div class="task_text_contents">
           <h3 class="task_title">{{task.name}}</h3>
