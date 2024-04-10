@@ -7,11 +7,13 @@ import AddCircleIcon from 'vue-material-design-icons/PlusCircleOutline.vue'
 import { ref, onMounted, computed } from 'vue'
 import { useTaskStore } from '../stores/taskStore'
 import { useGenreStore } from '../stores/genreStore'
+import { useUserStore } from '../stores/userStore'
 import { auth } from '../firebase'
 
 const showModal = ref(false);
 const taskStore = useTaskStore();
 const genreStore = useGenreStore();
+const userStore = useUserStore();
 const taskStatusElements = [
     "ToDo",
     "Pending",
@@ -32,6 +34,12 @@ onMounted(async()=> {
     await genreStore.fetchAllGenres();
   }catch(error){
     console.log(error)
+  }
+
+  try{
+    await userStore.fetchAllUsers();
+  }catch(error){
+    console.log('ユーザー情報の取得ができませんでした', error);
   }
 })
 
