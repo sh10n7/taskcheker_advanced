@@ -4,13 +4,16 @@ import Select from './Select.vue'
 import ToDoList from './ToDoList.vue'
 import FormModal from './FormModal.vue'
 import AddCircleIcon from 'vue-material-design-icons/PlusCircleOutline.vue'
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useTaskStore } from '../stores/taskStore'
 import { useGenreStore } from '../stores/genreStore'
+import { useUserStore } from '../stores/userStore'
+import { auth } from '../firebase'
 
 const showModal = ref(false);
 const taskStore = useTaskStore();
 const genreStore = useGenreStore();
+const userStore = useUserStore();
 const taskStatusElements = [
     "ToDo",
     "Pending",
@@ -32,6 +35,12 @@ onMounted(async()=> {
   }catch(error){
     console.log(error)
   }
+
+  try{
+    await userStore.fetchAllUsers();
+  }catch(error){
+    console.log('ユーザー情報の取得ができませんでした', error);
+  }
 })
 
 const changeSelectedGenreId = (e) => {
@@ -46,12 +55,17 @@ const filterTasksByStatus = (statusIndex) => {
   return taskStore.filteredTasks.filter(task => task.status == index);
 }
 
+const currentUser = auth.currentUser;
+const displayName = computed(()=>{
+  return currentUser.displayName;
+})
 
 </script>
 
 <template>
   <div class="main">
     <Header />
+    <p class="user_name">こんにちは{{ displayName }}さん</p>
     <div class="genre">
       <Select @change="changeSelectedGenreId" :genres="genreStore.genres"/>
       <AddCircleIcon class="add_circle_outline_icon" @click="showModal = true"/>
@@ -70,6 +84,10 @@ const filterTasksByStatus = (statusIndex) => {
   width: 100vw;
   height: 100vh;
   background-color: #f6f8f9;
+}
+
+.user_name {
+  margin: 30px 30px 0 30px;
 }
 
 .genre {

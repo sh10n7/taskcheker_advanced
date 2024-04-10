@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useTaskStore } from '../stores/taskStore'
+import { useUserStore } from '../stores/userStore';
 import FormModal from './FormModal.vue'
 
 const props = defineProps({
@@ -9,10 +10,22 @@ const props = defineProps({
 
 const showModal = ref(false)
 const taskStore = useTaskStore();
+const userStore = useUserStore();
 
 const formattedDeadlineDate = computed(() => {
   const date = new Date(props.task.deadlineDate)
   return date.toLocaleDateString('ja-JP')
+})
+
+const formattedUserName = computed(()=> {
+  //担当者のuidを取得する
+  const assigneeId = props.task.assigneeId;
+  
+  //userStoreから全ユーザー情報を取得し、findメソッドでuidとassigneeIdが同一のユーザーを探す
+  const assignee = userStore.users.find(u => u.uid === assigneeId);
+
+  // 該当のユーザーがいれば表示名を戻り値として返し、いない場合は不明なユーザーとして表示させる
+  return assignee ? assignee.displayName : '不明なユーザー';
 })
 
 
@@ -46,6 +59,9 @@ const deleteTask = async() => {
 
       <p class="detail_title">期限</p>
       <div>{{ formattedDeadlineDate }}</div>
+
+      <p class="detail_title">担当者</p>
+      <div>{{ formattedUserName }}</div>
     </div>
     <FormModal v-model="showModal" body="taskBody" :task="props.task" @close-modal="closeModal"/>
   </div>

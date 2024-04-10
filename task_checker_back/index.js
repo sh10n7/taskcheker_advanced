@@ -43,6 +43,7 @@ app.get("/genres", async(req, res) => {
 
 // タスクの作成
 app.post("/tasks", async (req, res) => {
+  console.log(req.body)
   try {
     const deadlineDate = new Date(req.body.deadlineDate)
     const savedData = await prisma.task.create({
@@ -147,6 +148,37 @@ app.get('/mytasks', verifyToken, async (req, res) => {
     res.json(MyTasks);
   } catch(error) {
     res.status(500).send('データの取得ができませんでした');
+  }
+})
+
+app.get('/users', async(req, res) => {
+  // レスポンス返却用の配列を準備
+  let allUsers = [];
+
+  // ユーザーのリストを取得するための非同期関数
+  const listAllUsers = async (nextPageToken) => {
+    try {
+      // Firebase Authenticationからユーザー情報を取得
+      const listUsersResult = await admin.auth().listUsers(1000, nextPageToken);
+      // 取得したユーザー情報を配列に追加
+      allUsers = allUsers.concat(listUsersResult.users.map(userRecord => userRecord.toJSON()));
+
+      // 次のページトークンがあれば、次のバッチのユーザーも取得
+      if (listUsersResult.pageToken) {
+        // 再帰的に次のバッチのユーザーを取得
+        await listAllUsers(listUsersResult.pageToken);
+      }
+    } catch (error) {
+      console.log('Error listing users:', error);
+      throw error; // エラーをスローして、後続の処理を停止
+    }
+  };
+  // リスト収集のメソッド呼び出し
+  try {
+    await listAllUsers();
+    res.json(allUsers);
+  }catch(error){
+    res.status(500).send("ユーザーリストの取得に失敗しました。");
   }
 })
 

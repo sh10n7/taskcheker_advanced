@@ -3,14 +3,25 @@ import Header from './Header.vue'
 import { ref } from 'vue'
 import { auth, createUserWithEmailAndPassword } from '../firebase';
 import { useRouter } from 'vue-router';
+import { updateProfile } from 'firebase/auth';
 
 const email = ref('');
 const password = ref('');
+const nickname = ref('');
+const currentUser = ref('');
 const router = useRouter();
 
 const handleSignUp = async() => {
-try {
-    await createUserWithEmailAndPassword(auth, email.value, password.value)
+  // 入力されたemail, passwordを元にユーザー登録をする
+  try {
+    const credentialUser = await createUserWithEmailAndPassword(auth, email.value, password.value);
+
+    // 登録したユーザー情報を取得する
+    const user = credentialUser.user;
+    // ユーザーデータ内のnicknameの値をdisplayNameの値として保持する
+    await updateProfile(user, {
+      displayName: nickname.value
+    });
     router.push("/home");
   }catch(error) {
     console.log('ユーザー登録できませんでした', error)
@@ -25,6 +36,7 @@ try {
     <h1>新規登録</h1>
     <input type="text" id="email" v-model="email" placeholder="email">
     <input type="password" id="password" v-model="password" placeholder="password" >
+    <input type="text" id="nickname" v-model="nickname" placeholder="nickname" >
     <button value="新規登録" @click="handleSignUp">新規登録</button>
     <p>既にアカウントをお持ちの方はこちらへ<router-link to="/">こちら</router-link></p>
   </div>
