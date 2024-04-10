@@ -5,7 +5,8 @@ const genreStore = useGenreStore();
 
 const props = defineProps({
   taskStatus: Array,
-  genres: Array
+  genres: Array,
+  assignees: Array,
 })
 
 </script>
@@ -18,6 +19,10 @@ const props = defineProps({
 
   <select v-else-if="genres" class="select">
     <option v-for="genre in props.genres" :key="genre.id" :value=genre.id>{{ genre.name }}</option>
+  </select>
+
+  <select v-else-if="assignees" class="select">
+    <option v-for="assignee in props.assignees" :key="assignee.id" :value=assignee.uid>{{ assignee.displayName }}</option>
   </select>
 </template>
 
