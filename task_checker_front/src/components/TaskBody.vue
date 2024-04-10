@@ -3,6 +3,7 @@ import Select from './Select.vue'
 import { ref } from 'vue'
 import { useTaskStore } from '../stores/taskStore'
 import { useGenreStore } from '../stores/genreStore'
+import { useUserStore } from '../stores/userStore'
 import { auth } from '../firebase';
 
 const props = defineProps({
@@ -15,16 +16,23 @@ const props = defineProps({
 
 const taskStore = useTaskStore();
 const genreStore = useGenreStore();
+const userStore = useUserStore();
 const emit = defineEmits(['close-modal'])
 
 const genreSelect = (e) => {
   props.task.genreId = Number(e.target.value)
 }
 
+const assigneeSelect = (e) => {
+  console.log(e.target.value)
+  props.task.assigneeId = e.target.value
+}
+
 const submitTask = async() => {
   // ログイン中のユーザーuidをtaskオブジェクトに追加
   const user = auth.currentUser;
   props.task.uid = user.uid;
+  console.log(props.task)
 
   if(props.task.id) {
     try{
@@ -59,6 +67,8 @@ const submitTask = async() => {
       <textarea v-model="props.task.explanation"/>
       <h4 class="input_title">期限</h4>
       <input class="input_date" type="date" v-model="props.task.deadlineDate"/>
+      <h4 class="input_title">担当者</h4>
+      <Select @change="assigneeSelect" :value="props.task.assigneeId" :assignees="userStore.users" />
     </div>
     <input class="input_submit" type="button" value="送信" @click="submitTask"/>
   </form>

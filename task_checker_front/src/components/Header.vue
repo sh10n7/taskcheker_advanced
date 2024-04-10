@@ -20,7 +20,6 @@ const handleSignOut = async() => {
 
 onMounted(() => {
   onAuthStateChanged(auth, (user) => {
-    console.log(auth.currentUser)
     // ユーザーがログイン中の場合はuserがtrueを返す
     if(user) {
       currentUser.value = auth.currentUser;
