@@ -40,7 +40,6 @@ const closeModal = () => {
 
 <style>
 .vm {
-  height: 75vh;
   padding: 2vw 10vw;
   text-align: center;
 }
