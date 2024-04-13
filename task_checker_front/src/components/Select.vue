@@ -20,6 +20,14 @@ defineRule('required', (value) => {
   return true;
 });
 
+// 選択必須のバリデーション
+defineRule('selectPullDown', (value) => {
+  if(!value){
+    return `This field must be selected`
+  }
+  return true;
+});
+
 </script>
 
 <template>
@@ -31,7 +39,7 @@ defineRule('required', (value) => {
   <!-- ジャンルの一覧 -->
   <div v-else-if="props.genres" class="input_area">
     <ErrorMessage name="genre" class="error-message"/> 
-    <Field name="genre" as="select" class="select" rules="required">
+    <Field name="genre" as="select" class="select" rules="selectPullDown">
       <option v-for="genre in props.genres" :key="genre.id" :value=genre.id>{{ genre.name }}</option>
     </Field>
   </div>
@@ -39,7 +47,7 @@ defineRule('required', (value) => {
   <!-- 担当者一覧 -->
   <div v-else-if="props.assignees" class="input_area">
     <ErrorMessage name="assignees" class="error-message"/> 
-    <Field name="assignees" as="select" class="select" rules="required">
+    <Field name="assignees" as="select" class="select" rules="selectPullDown">
       <option v-for="assignee in props.assignees" :key="assignee.id" :value=assignee.uid>{{ assignee.displayName }}</option>
     </Field>
   </div>
