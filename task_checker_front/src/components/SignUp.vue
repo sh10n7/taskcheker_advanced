@@ -4,6 +4,7 @@ import { ref } from 'vue'
 import { auth, createUserWithEmailAndPassword } from '../firebase';
 import { useRouter } from 'vue-router';
 import { updateProfile } from 'firebase/auth';
+import { Form, Field } from 'vee-validate';
 
 const email = ref('');
 const password = ref('');
@@ -32,14 +33,14 @@ const handleSignUp = async() => {
 
 <template>
   <Header />
-  <div class="form-body">
-    <h1>新規登録</h1>
-    <input type="text" id="email" v-model="email" placeholder="email">
-    <input type="password" id="password" v-model="password" placeholder="password" >
-    <input type="text" id="nickname" v-model="nickname" placeholder="nickname" >
-    <button value="新規登録" @click="handleSignUp">新規登録</button>
-    <p>既にアカウントをお持ちの方はこちらへ<router-link to="/">こちら</router-link></p>
-  </div>
+    <Form class="form-body">
+      <h1>新規登録</h1>
+      <Field type="text" id="email" name="email" v-model="email" placeholder="email" /> 
+      <Field type="password" id="password" name="password" v-model="password" placeholder="password" />
+      <Field type="text" id="nickname" name="nickname" v-model="nickname" placeholder="nickname" />
+      <button value="新規登録" @click="handleSignUp">新規登録</button>
+      <p>既にアカウントをお持ちの方はこちらへ<router-link to="/">こちら</router-link></p>
+    </Form>
 </template>
 
 <style scoped>
