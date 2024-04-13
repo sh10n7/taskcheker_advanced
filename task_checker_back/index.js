@@ -43,7 +43,6 @@ app.get("/genres", async(req, res) => {
 
 // タスクの作成
 app.post("/tasks", async (req, res) => {
-  console.log(req.body)
   try {
     const deadlineDate = new Date(req.body.deadlineDate)
     const savedData = await prisma.task.create({
@@ -88,7 +87,6 @@ app.delete("/tasks/:id", async(req, res) => {
 
 // ジャンルの作成
 app.post("/genres", async (req, res) => {
-  console.log(req.user)
   try {
     const savedData = await prisma.genre.create({data: req.body});
     res.json(savedData)
@@ -182,6 +180,17 @@ app.get('/users', async(req, res) => {
   }
 })
 
+// コメント投稿
+app.post('/comment', async(req, res) => {
+  console.log(req.body)
+  try {
+    const deadlineDate = new Date(req.body.deadlineDate)
+    const savedData = await prisma.comment.create({data: req.body});
+    res.json(savedData)
+  } catch(error) {
+    res.status(500).send("コメントの保存に失敗しました")
+  }
+})
 
 // サーバー起動処理
 app.listen(3000, () => {
