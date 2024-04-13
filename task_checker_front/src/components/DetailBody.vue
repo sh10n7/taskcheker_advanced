@@ -2,15 +2,19 @@
 import { ref, computed } from 'vue'
 import { useTaskStore } from '../stores/taskStore'
 import { useUserStore } from '../stores/userStore';
+import { useCommentStore } from '../stores/commentStore';
 import FormModal from './FormModal.vue'
+import DeleteIcon from 'vue-material-design-icons/DeleteCircle.vue'
 
 const props = defineProps({
   task: Object
 })
 
-const showModal = ref(false)
 const taskStore = useTaskStore();
 const userStore = useUserStore();
+const commentStore = useCommentStore();
+const showModal = ref(false);
+const comment = ref({});
 
 const formattedDeadlineDate = computed(() => {
   const date = new Date(props.task.deadlineDate)
@@ -36,9 +40,26 @@ const closeModal = () => {
 const deleteTask = async() => {
   try{
     await taskStore.removeTask(props.task);
-    
   }catch(error){
     console.log('タスクの削除ができませんでした', error);
+  }
+}
+
+const addComment = async(task) => {
+  comment.value.taskId = task.id
+  try{
+    await commentStore.addComment(comment.value);
+    comment.value = {};
+  }catch(error){
+    console.log('コメントの保存ができませんでした', error);
+  }
+}
+
+const deleteComment = async(task) => {
+  try{
+    await taskStore.removeComment()
+  }catch(error){
+    console.log('コメントの削除ができませんでした', error);
   }
 }
 
@@ -62,6 +83,20 @@ const deleteTask = async() => {
 
       <p class="detail_title">担当者</p>
       <div>{{ formattedUserName }}</div>
+    </div>
+    <div class="comment_area">
+      <h3>コメント一覧</h3>
+      <form class="comment_form">
+        <input type="text" class="comment_input" placeholder="コメント" v-model="comment.content">
+        <button class="add_btn" @click.prevent="addComment(props.task)">投稿</button>
+      </form>
+      <ul>
+        <li class="comment">
+          <p class="comment_content">内容</p>
+          <DeleteIcon class="delete_btn"/>
+          <!-- <button class="delete_btn" @click="deleteComment(props.task)">削除</button> -->
+        </li>
+      </ul>
     </div>
     <FormModal v-model="showModal" body="taskBody" :task="props.task" @close-modal="closeModal"/>
   </div>
@@ -104,4 +139,35 @@ const deleteTask = async() => {
   height: 40px;
 }
 
+ul,li {
+  padding: 0;
+}
+
+.comment_form {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.comment_input {
+  width: 320px;
+}
+.add_btn {
+  margin: 0;
+}
+.comment {
+  display: flex;
+  align-items: center;
+  /* justify-content: space-between; */
+}
+
+.comment_content,
+.delete_btn {
+  margin: 8px 8px 0 0;
+}
+
+.delete_btn {
+  color: #a9a9a9;
+  font-size: 32px;
+}
 </style>
