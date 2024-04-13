@@ -20,6 +20,10 @@ app.use(cors({
   credentials: true,
 }));
 
+// expressの導入
+const { body, validationResult } = require('express-validator');
+app.use(express.urlencoded({ extended: true }));
+
 
 // タスクの読み取り処理
 app.get("/tasks", async(req, res) => {
@@ -42,7 +46,40 @@ app.get("/genres", async(req, res) => {
 })
 
 // タスクの作成
-app.post("/tasks", async (req, res) => {
+app.post("/tasks", 
+
+//バリデーションの追加
+[
+  //genreIdの値が必須、かつ整数値であること。
+  body('genreId').exists().withMessage('genreId is required')
+  .isInt().withMessage('genreId should be Number'),
+
+  //titleが必須であること
+  body('title').exists().withMessage('title is required'),
+
+  //explanationが必須であること
+  body('explanation').exists().withMessage('explanation is required'),
+
+  //deadlinedateは必須であること、
+  body('deadlineDate').exists().withMessage('deadlineDate is required')
+  .isDate().withMessage('deadlineDate must be a valid date') //日付の有効性をチェック(これだけでもOK)
+  .matches(/^\d{4}-\d{2}-\d{2}$/).withMessage('deadlineDate must be in the format YYYY-MM-DD'), // 厳密に調べるために4桁-2桁-2桁の正規表現でチェック
+
+  //担当者は必須であること
+  body('assigneeId').exists().withMessage('assigneeId is required'),
+
+  //作成者のIDは必須であること
+  body('uid').exists().withMessage('assigneeId is required')
+],
+
+
+
+async (req, res) => {
+  const errors = validationResult(req);
+  if(!errors.isEmpty()){
+    return res.status(400).json({ errors: errors.array()});
+  }
+
   try {
     const deadlineDate = new Date(req.body.deadlineDate)
     const savedData = await prisma.task.create({
