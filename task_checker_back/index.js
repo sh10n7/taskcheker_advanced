@@ -192,6 +192,17 @@ app.post('/comment', async(req, res) => {
   }
 })
 
+// コメントの読み取り処理
+app.get("/comments", async(_, res) => {
+  try {
+  const AllComments = await prisma.comment.findMany();
+  res.json(AllComments)
+  } catch(error) {
+  console.log(error)
+  }
+})
+
+
 // サーバー起動処理
 app.listen(3000, () => {
   console.log("listening on localhost 3000")

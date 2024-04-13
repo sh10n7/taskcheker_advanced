@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useTaskStore } from '../stores/taskStore'
 import { useUserStore } from '../stores/userStore';
 import { useCommentStore } from '../stores/commentStore';
@@ -63,6 +63,17 @@ const deleteComment = async(task) => {
   }
 }
 
+const filterComment = (task) => {
+  return commentStore.comments.filter(c => c.taskId === task.id);
+}
+
+onMounted(async() => {
+  try{
+    await commentStore.fetchAllComments();
+  }catch(error){
+    console.log('コメントの取得ができませんでした', error);
+  }
+})
 </script>
 
 <template>
@@ -91,10 +102,9 @@ const deleteComment = async(task) => {
         <button class="add_btn" @click.prevent="addComment(props.task)">投稿</button>
       </form>
       <ul>
-        <li class="comment">
-          <p class="comment_content">内容</p>
-          <DeleteIcon class="delete_btn"/>
-          <!-- <button class="delete_btn" @click="deleteComment(props.task)">削除</button> -->
+        <li class="comment" v-for="comment in filterComment(task)" :key="comment.id">
+          <p class="comment_content">{{ comment.content }}</p>
+          <DeleteIcon class="delete_btn" @click="deleteComment"/>
         </li>
       </ul>
     </div>
@@ -158,7 +168,6 @@ ul,li {
 .comment {
   display: flex;
   align-items: center;
-  /* justify-content: space-between; */
 }
 
 .comment_content,
@@ -168,6 +177,5 @@ ul,li {
 
 .delete_btn {
   color: #a9a9a9;
-  font-size: 32px;
 }
 </style>

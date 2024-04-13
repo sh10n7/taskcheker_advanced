@@ -5,6 +5,15 @@ import { ref } from 'vue'
 export const useCommentStore = defineStore('comment', () => {
   const comments = ref([]);
 
+  async function fetchAllComments () {
+    try{
+      const response = await api.get('/comments');
+      comments.value = response.data;
+    }catch(error){
+      console.log('コメントの取得ができませんでした', error);
+    }
+  }
+
   async function addComment (newComment) {
     try{
       const response = await api.post(`/comment`, newComment);
@@ -15,5 +24,5 @@ export const useCommentStore = defineStore('comment', () => {
     }
   }
 
-  return { comments, addComment }
+  return { comments, addComment, fetchAllComments }
 })
