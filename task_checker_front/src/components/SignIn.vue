@@ -3,16 +3,41 @@ import { auth, signInWithEmailAndPassword } from '../firebase';
 import Header from './Header.vue'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router';
+import { Form, Field, defineRule, ErrorMessage } from 'vee-validate';
+import { required, email, min } from '@vee-validate/rules';
 
-const email = ref('');
+const emailAddress = ref('');
 const password = ref('');
 
 const router = useRouter();
 const currentUser = ref(null);
 
+// 必須のバリデーション
+defineRule('required', (value) => {
+  if(!value){
+    return `This field is required`
+  }
+  return true;
+});
+
+// emailのバリデーション
+defineRule('email', email);
+
+// 最小値のバリデーション
+defineRule('min', min);
+
+// 英数字混合
+defineRule('checkPassword', (value) => {
+  if(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$/.test(value)){
+    return true;
+  }
+  return 'password should be in mix of letters and numbers'
+})
+
+
 const handleSignIn = async() => {
   try{
-    const credentialUser = await signInWithEmailAndPassword(auth, email.value, password.value)
+    const credentialUser = await signInWithEmailAndPassword(auth, emailAddress.value, password.value)
     currentUser.value = credentialUser.user;
     // Json Web Tokenの取得
     const token = await credentialUser.user.getIdToken();
@@ -27,13 +52,17 @@ const handleSignIn = async() => {
 
 <template>
   <Header />
-  <div class="form-body">
+  <Form class="form-body">
       <h1>ログイン</h1>
-      <input type="text" id="email" v-model="email" placeholder="email">
-      <input type="password" id="password"v-model="password" placeholder="password" autocomplete="current-password">
-      <button value="ログイン" @click="handleSignIn">ログイン</button>
+      <ErrorMessage name="email" class="error-message"/> 
+      <Field type="text" id="email" name="email" v-model="emailAddress" placeholder="email" rules="required|email"/>
+
+      <ErrorMessage name="password" class="error-message"/> 
+      <Field type="password" id="password" name="password" v-model="password" placeholder="password" autocomplete="current-password" rules="required|min:6|checkPassword"/>
+     
+      <button value="ログイン" @click.prevent="handleSignIn">ログイン</button>
       <p>アカウント作成がお済みでない場合は<router-link to="/signup">こちら</router-link></p>
-  </div>
+  </Form>
 </template>
 
 <style scoped>
@@ -60,6 +89,10 @@ button {
   margin-bottom: 8px;
   font-size: 15px;
   width: 246px;
+}
+
+.error-message {
+  color: red;
 }
 
 </style>

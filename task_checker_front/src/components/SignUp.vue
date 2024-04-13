@@ -4,17 +4,49 @@ import { ref } from 'vue'
 import { auth, createUserWithEmailAndPassword } from '../firebase';
 import { useRouter } from 'vue-router';
 import { updateProfile } from 'firebase/auth';
+import { Form, Field, defineRule, ErrorMessage } from 'vee-validate';
+import { required, email, min } from '@vee-validate/rules';
 
-const email = ref('');
+const emailAddress = ref('');
 const password = ref('');
 const nickname = ref('');
 const currentUser = ref('');
 const router = useRouter();
 
+// 必須のバリデーション
+defineRule('required', (value) => {
+  if(!value){
+    return `This field is required`
+  }
+  return true;
+});
+
+// emailのバリデーション
+defineRule('email', email);
+
+// 最小値のバリデーション
+defineRule('min', min);
+
+// 英数字混合
+defineRule('checkPassword', (value) => {
+  if(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$/.test(value)){
+    return true;
+  }
+  return 'password should be in mix of letters and numbers'
+})
+
+// nicknameは日本語のみ
+defineRule('checkNickname', (value) => {
+  if(/^[ぁ-んァ-ン一-龥0-9]+$/.test(value)){
+    return true;
+  }
+  return 'nickname should be in full-width Hiragana, Katakana, Kanji characters or Number'
+})
+
 const handleSignUp = async() => {
   // 入力されたemail, passwordを元にユーザー登録をする
   try {
-    const credentialUser = await createUserWithEmailAndPassword(auth, email.value, password.value);
+    const credentialUser = await createUserWithEmailAndPassword(auth, emailAddress.value, password.value);
 
     // 登録したユーザー情報を取得する
     const user = credentialUser.user;
@@ -32,14 +64,20 @@ const handleSignUp = async() => {
 
 <template>
   <Header />
-  <div class="form-body">
-    <h1>新規登録</h1>
-    <input type="text" id="email" v-model="email" placeholder="email">
-    <input type="password" id="password" v-model="password" placeholder="password" >
-    <input type="text" id="nickname" v-model="nickname" placeholder="nickname" >
-    <button value="新規登録" @click="handleSignUp">新規登録</button>
-    <p>既にアカウントをお持ちの方はこちらへ<router-link to="/">こちら</router-link></p>
-  </div>
+    <Form class="form-body">
+      <h1>新規登録</h1>
+      <ErrorMessage name="email" class="error-message"/> 
+      <Field type="text" id="email" name="email" v-model="emailAddress" placeholder="email" rules="required|email"/>
+
+      <ErrorMessage name="password" class="error-message"/>
+      <Field type="password" id="password" name="password" v-model="password" placeholder="password" rules="required|min:6|checkPassword"/>
+
+      <ErrorMessage name="nickname" class="error-message"/>
+      <Field type="text" id="nickname" name="nickname" v-model="nickname" placeholder="nickname" rules="required|checkNickname"/>
+
+      <button value="新規登録" @click.prevent="handleSignUp">新規登録</button>
+      <p>既にアカウントをお持ちの方はこちらへ<router-link to="/">こちら</router-link></p>
+    </Form>
 </template>
 
 <style scoped>
@@ -66,6 +104,10 @@ button {
   margin-bottom: 8px;
   font-size: 15px;
   width: 246px;
+}
+
+.error-message {
+  color: red;
 }
 
 </style>
