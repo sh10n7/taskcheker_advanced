@@ -75,7 +75,7 @@ const handleSignUp = async() => {
       <ErrorMessage name="nickname" class="error-message"/>
       <Field type="text" id="nickname" name="nickname" v-model="nickname" placeholder="nickname" rules="required|checkNickname"/>
 
-      <button value="新規登録" @click="handleSignUp">新規登録</button>
+      <button value="新規登録" @click.prevent="handleSignUp">新規登録</button>
       <p>既にアカウントをお持ちの方はこちらへ<router-link to="/">こちら</router-link></p>
     </Form>
 </template>
