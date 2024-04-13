@@ -24,5 +24,18 @@ export const useCommentStore = defineStore('comment', () => {
     }
   }
 
-  return { comments, addComment, fetchAllComments }
+  // コメントの削除
+  async function removeComment(deleteComment) {
+    try{
+      const response = await api.delete(`/comment/${deleteComment.id}`, deleteComment); 
+      const index = comments.value.findIndex(c => c.id === deleteComment.id);
+      if (index !== -1) {
+        comments.value.splice(index, 1);
+      }
+    } catch(error) {
+      console.log('コメントの削除に失敗しました。', error)
+    }
+  }
+
+  return { comments, fetchAllComments, addComment, removeComment }
 })

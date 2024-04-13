@@ -182,7 +182,6 @@ app.get('/users', async(req, res) => {
 
 // コメント投稿
 app.post('/comment', async(req, res) => {
-  console.log(req.body)
   try {
     const deadlineDate = new Date(req.body.deadlineDate)
     const savedData = await prisma.comment.create({data: req.body});
@@ -202,6 +201,16 @@ app.get("/comments", async(_, res) => {
   }
 })
 
+// コメントの削除
+app.delete("/comment/:id", async (req, res) => {
+  const commentId = parseInt(req.params.id, 10);
+  try {
+    const deleteComment = await prisma.comment.delete({where:{id: commentId}})
+    res.json(deleteComment);
+  } catch(error) {
+    res.status(500).send("コメントの削除に失敗しました。")
+  }
+})
 
 // サーバー起動処理
 app.listen(3000, () => {

@@ -55,9 +55,9 @@ const addComment = async(task) => {
   }
 }
 
-const deleteComment = async(task) => {
+const deleteComment = async(comment) => {
   try{
-    await taskStore.removeComment()
+    await commentStore.removeComment(comment);
   }catch(error){
     console.log('コメントの削除ができませんでした', error);
   }
@@ -104,7 +104,7 @@ onMounted(async() => {
       <ul>
         <li class="comment" v-for="comment in filterComment(task)" :key="comment.id">
           <p class="comment_content">{{ comment.content }}</p>
-          <DeleteIcon class="delete_btn" @click="deleteComment"/>
+          <DeleteIcon class="delete_btn" @click="deleteComment(comment)"/>
         </li>
       </ul>
     </div>
